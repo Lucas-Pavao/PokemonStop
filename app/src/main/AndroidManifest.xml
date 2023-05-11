@@ -34,7 +34,12 @@
 
         <activity
             android:name=".DetailsActivity"
-            android:exported="false" />
+            android:parentActivityName=".ListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ListActivity" />
+        </activity>
+
     </application>
 
 </manifest>
