@@ -30,6 +30,16 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ListActivity" />
+
+        <activity
+            android:name=".DetailsActivity"
+            android:parentActivityName=".ListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ListActivity" />
+        </activity>
+
     </application>
 
 </manifest>
