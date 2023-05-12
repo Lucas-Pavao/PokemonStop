@@ -120,8 +120,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnMyLocationButtonClickListener(
                 () -> {
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(20.0f));
                     Toast.makeText(MapsActivity.this,
                             "Indo para a sua localização", Toast.LENGTH_SHORT).show();
+                    // Obter a última localização conhecida do usuário
+                    FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                    Task<Location> task = fusedLocationProviderClient.getLastLocation();
+                    task.addOnSuccessListener(location -> {
+                        if (location != null) {
+                            LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+                            // Definir o nível de zoom desejado (ajuste conforme necessário)
+                            float zoomLevel = 20.0f;
+
+                            // Movimentar a câmera para a localização atual do usuário com o zoom desejado
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, zoomLevel));
+                        }
+                    });
+
                     return false;
                 });
 
