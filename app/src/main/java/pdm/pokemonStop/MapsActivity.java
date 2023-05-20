@@ -25,12 +25,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
+
+import java.util.Random;
 
 import pdm.pokemonStop.databinding.ActivityMapsBinding;
 
@@ -41,7 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int FINE_LOCATION_REQUEST = 100;
     private boolean fine_location;
     private PopupWindow popupWindow;
-    private Circle userCircle;
+//    private Circle userCircle;
 
 
     @Override
@@ -78,8 +81,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 FINE_LOCATION_REQUEST);
     }
 
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         boolean granted = (grantResults.length > 0) &&
                 (grantResults[0] == PackageManager.PERMISSION_GRANTED);
@@ -143,6 +145,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setMyLocationEnabled(this.fine_location);
         if (mMap.isMyLocationEnabled()) {
+
+            FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+            Task<Location> task = fusedLocationProviderClient.getLastLocation();
+            task.addOnSuccessListener(location -> {
+                if (location != null) {
+                    LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+                    // Mover a câmera do mapa para a localização atual do usuário
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+
+                    // Definir o nível de zoom do mapa
+                    float zoomLevel = 15.0f;
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
+
+                    // Gerar marcadores aleatórios próximos à local
+                    double radius = 10; // Raio máximo em metros
+                    int numMarkers = 5; // Número de marcadores a serem gerados
+
+                    addRandomMarkers(userLocation, radius, numMarkers);
+                }
+            });
+        }
+
+
+
             // Definir um Listener para quando a localização do usuário mudar
             mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
                 @Override
@@ -163,42 +190,62 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     // Remover o Listener para evitar chamadas repetidas
                     mMap.setOnMyLocationChangeListener(null);
 
-                    if (userCircle != null) {
-                        userCircle.remove();
-                    }
-                    drawCircle(userLocation);
-
+//                    if (userCircle != null) {
+//                        userCircle.remove();
+//                    }
+//                    drawCircle(userLocation);
+                    currentLocation();
                 }
             });
         }
 
-        currentLocation();
 
-    }
 
-    private void drawCircle(LatLng point){
 
-        // Instantiating CircleOptions to draw a circle around the marker
-        CircleOptions circleOptions = new CircleOptions();
 
-        // Specifying the center of the circle
-        circleOptions.center(point);
+//    private void drawCircle(LatLng point){
+//
+//        // Instantiating CircleOptions to draw a circle around the marker
+//        CircleOptions circleOptions = new CircleOptions();
+//
+//        // Specifying the center of the circle
+//        circleOptions.center(point);
+//
+//        // Radius of the circle
+//        circleOptions.radius(20);
+//
+//        // Border color of the circle
+//        circleOptions.strokeColor(Color.BLUE);
+//
+//        // Fill color of the circle
+//        circleOptions.fillColor(Color.parseColor("#500000FF"));
+//
+//        // Border width of the circle
+//        circleOptions.strokeWidth(2);
+//
+//        // Adding the circle to the GoogleMap
+//       userCircle = mMap.addCircle(circleOptions);
+//
+//    }
 
-        // Radius of the circle
-        circleOptions.radius(20);
+    private void addRandomMarkers(LatLng userLocation, double radius, int numMarkers) {
+        Random random = new Random();
 
-        // Border color of the circle
-        circleOptions.strokeColor(Color.BLUE);
+        for (int i = 0; i < numMarkers; i++) {
+            // Gerar um deslocamento aleatório em metros dentro do raio especificado
+            double displacement = radius * Math.sqrt(random.nextDouble());
+            double angle = 2 * Math.PI * random.nextDouble();
 
-        // Fill color of the circle
-        circleOptions.fillColor(Color.parseColor("#500000FF"));
+            // Calcular as coordenadas do marcador com base no deslocamento e na localização atual do usuário
+            double latitude = userLocation.latitude + displacement * Math.cos(angle) / 111111;
+            double longitude = userLocation.longitude + displacement * Math.sin(angle) / (111111 * Math.cos(userLocation.latitude));
 
-        // Border width of the circle
-        circleOptions.strokeWidth(2);
+            // Criar um objeto LatLng com as coordenadas geradas
+            LatLng markerLocation = new LatLng(latitude, longitude);
 
-        // Adding the circle to the GoogleMap
-       userCircle = mMap.addCircle(circleOptions);
-
+            // Adicionar o marcador no mapa
+            mMap.addMarker(new MarkerOptions().position(markerLocation));
+        }
     }
 
     public void currentLocation() {
@@ -206,16 +253,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 LocationServices.getFusedLocationProviderClient(this);
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
         task.addOnSuccessListener(location -> {
-            if (location != null) {
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                // Verificar se o círculo inicial já foi criado
-                if (userCircle == null) {
-                    drawCircle(latLng);
-                } else {
-                    // Atualizar a posição do círculo inicial
-                    userCircle.setCenter(latLng);
-                }
-            }
+//            if (location != null) {
+//                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//                // Verificar se o círculo inicial já foi criado
+//                if (userCircle == null) {
+//                    drawCircle(latLng);
+//                } else {
+//                    // Atualizar a posição do círculo inicial
+//                    userCircle.setCenter(latLng);
+//                }
+//            }
         });
 
     }
