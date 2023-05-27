@@ -1,4 +1,4 @@
-package pdm.pokemonStop;
+package pdm.pokemonStop.model;
 
 public class Pokemon {
     private String name;

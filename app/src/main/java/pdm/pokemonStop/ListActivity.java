@@ -6,13 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import pdm.pokemonStop.model.Pokemon;
 
 public class ListActivity extends AppCompatActivity {
 
-    public static final Pokemon [] pokemons = {
+    public static final Pokemon[] pokemons = {
             new Pokemon("Bulbasaur", "#001"),
             new Pokemon("Ivysaur", "#002"),
             new Pokemon("Venusaur", "#003"),
