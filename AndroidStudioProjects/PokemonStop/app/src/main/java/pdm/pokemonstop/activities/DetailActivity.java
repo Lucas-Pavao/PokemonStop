@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.squareup.picasso.Picasso;
 
 import pdm.pokemonstop.R;
@@ -56,11 +58,15 @@ public class DetailActivity extends AppCompatActivity {
                     tvName.setText(pokemon.getName().substring(0, 1).toUpperCase() + pokemon.getName().substring(1));
                     tvTypes.setText(pokemon.getTypesToString());
 
-
-                    Picasso.get()
-                            .load(pokemon.getSprites().getFrontDefault())
-                            .resize(128, 128)
+                    Glide.with(DetailActivity.this)
+                            .asGif()
+                            .load(pokemon.getSprites().getVersions().getGenerationV().getBlackWhite().getAnimated().getFront_default())
+                            .apply(RequestOptions.overrideOf(128, 128))
                             .into(ivPokemon);
+//                    Picasso.get()
+//                            .load(pokemon.getSprites().getVersions().getGenerationV().getBlackWhite().getAnimated().getFront_default())
+//                            .resize(128, 128)
+//                            .into(ivPokemon);
 
                 }
 
