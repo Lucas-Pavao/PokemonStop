@@ -36,7 +36,7 @@ public class Pokemon {
     }
 
     public String getName() {
-        return name;
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
     public void setName(String name) {
@@ -89,7 +89,7 @@ public class Pokemon {
         for (int i = 0; i < types.size(); i++) {
             if(i > 0)
                 t += ", ";
-            t += types.get(i).getType().getName();
+            t += types.get(i).getType().getName().substring(0, 1).toUpperCase() + types.get(i).getType().getName().substring(1);
         }
 
         return t;
