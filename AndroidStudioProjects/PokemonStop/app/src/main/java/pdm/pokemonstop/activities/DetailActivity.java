@@ -63,12 +63,9 @@ public class DetailActivity extends AppCompatActivity {
                             .load(pokemon.getSprites().getVersions().getGenerationV().getBlackWhite().getAnimated().getFront_default())
                             .apply(RequestOptions.overrideOf(128, 128))
                             .into(ivPokemon);
-//                    Picasso.get()
-//                            .load(pokemon.getSprites().getVersions().getGenerationV().getBlackWhite().getAnimated().getFront_default())
-//                            .resize(128, 128)
-//                            .into(ivPokemon);
 
                 }
+
 
 
             }

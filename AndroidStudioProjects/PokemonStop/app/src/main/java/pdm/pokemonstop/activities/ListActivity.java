@@ -25,7 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity {
 
     List<Pokemon> pokemonList = new ArrayList<>();
     RecyclerView recyclerView;
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_list);
 
         recyclerView = (RecyclerView) findViewById(R.id.rv_pokemons);
 
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Intent i = new Intent(MainActivity.this, DetailActivity.class);
+                Intent i = new Intent(ListActivity.this, DetailActivity.class);
                 i.putExtra("ID", pokemonList.get(position).getId());
                 startActivity(i);
             }
@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("POKEMON", "Weight: " + pokemon.getWeight());
 
                     }
+
                 }
 
                 @Override
