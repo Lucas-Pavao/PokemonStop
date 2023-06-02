@@ -13,12 +13,19 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -30,6 +37,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
@@ -52,6 +60,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean fine_location;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+
+    private PopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +140,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             });
         }
 
+        mMap.setOnMarkerClickListener(marker -> {
+
+
+            Pokemon pokemon = (Pokemon) marker.getTag();
+            View popupView = getLayoutInflater().inflate(R.layout.fragment_popup_layout, null);
+            ImageView imageView = popupView.findViewById(R.id.pokemon_image);
+            TextView textView = popupView.findViewById(R.id.pokemon_name);
+            Button button = popupView.findViewById(R.id.capture_button);
+
+            Glide.with(MapsActivity.this)
+                    .asGif()
+                    .load(pokemon.getSprites().getVersions().getGenerationV().getBlackWhite().getAnimated().getFront_default())
+                    .apply(RequestOptions.overrideOf(128, 128))
+                    .into(imageView); // substitua pela imagem do Pokémon
+            textView.setText(pokemon.getName()); // substitua pelo nome do Pokémon
+
+            button.setOnClickListener(v -> {
+                // Coloque aqui o código para capturar o pokémon
+                // ...
+                popupWindow.dismiss(); // fecha a popup
+            });
+
+            PopupWindow popupWindow = new PopupWindow(popupView, getResources().getDimensionPixelSize(R.dimen.popup_width), ViewGroup.LayoutParams.WRAP_CONTENT, true);
+            popupWindow.showAtLocation(getWindow().getDecorView().getRootView(), Gravity.CENTER, 0, 0);
+
+            int imageSize = getResources().getDimensionPixelSize(R.dimen.popup_image_size);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(imageSize, imageSize);
+            layoutParams.gravity = Gravity.CENTER; // Centralizar o ImageView
+            imageView.setLayoutParams(layoutParams);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            return false;
+        });
+
     }
 
     private void requestPermission() {
@@ -178,7 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void getPokemonImageUrl(LatLng markerLocation) {
         Random random = new Random();
-        int id  = random.nextInt(31) + 1;
+        int id = random.nextInt(31) + 1;
         final PokemonService apiService = PokemonRepository.getClient().create(PokemonService.class);
         Call<Pokemon> call = apiService.getPokemon(id);
 
@@ -201,11 +245,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     Canvas canvas = new Canvas(bitmap);
                                     resource.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
                                     resource.draw(canvas);
+                                    if (pokemon != null) {
+                                        // Definir o objeto pokemon como tag do marcador
+                                        MarkerOptions markerOptions = new MarkerOptions()
+                                                .position(markerLocation)
+                                                .icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+                                     Marker marker =   mMap.addMarker(markerOptions);
+                                     marker.setTag(pokemon);
 
-                                    MarkerOptions markerOptions = new MarkerOptions()
-                                            .position(markerLocation)
-                                            .icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                                    mMap.addMarker(markerOptions);
+                                    } else {
+                                        // Tratar resposta não bem sucedida
+                                        Toast.makeText(MapsActivity.this, "Erro ao receber informações do Pokémon", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
 
                                 @Override
@@ -217,17 +268,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
 
-
             }
 
             @Override
             public void onFailure(Call<Pokemon> call, Throwable t) {
-
+                // Tratar falha na chamada API
+                Toast.makeText(MapsActivity.this, "Erro de conexão", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
-
 
 
 }
