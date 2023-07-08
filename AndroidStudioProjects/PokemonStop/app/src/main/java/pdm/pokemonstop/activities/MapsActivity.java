@@ -60,8 +60,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean fine_location;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-
     private PopupWindow popupWindow;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +138,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     addRandomMarkers(userLocation, radius, numMarkers);
                 }
             });
+
+
         }
 
         mMap.setOnMarkerClickListener(marker -> {
@@ -195,11 +197,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mMap != null) {
             mMap.setMyLocationEnabled(this.fine_location);
         }
-
     }
 
     private void addRandomMarkers(LatLng userLocation, double radius, int numMarkers) {
         Random random = new Random();
+
+
 
         for (int i = 0; i < numMarkers; i++) {
             // Gerar um deslocamento aleatório em metros dentro do raio especificado
