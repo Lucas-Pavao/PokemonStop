@@ -1,44 +1,45 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="5dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:paddingTop="5dp"
+    android:padding="5dp"
     tools:context="pdm.pokemonstop.activities.DetailActivity">
 
-    <ImageView
-        android:layout_width="128dp"
-        android:layout_height="128dp"
-        android:id="@+id/iv_detail_pokemon"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@null"
-        android:id="@+id/tv_detail_name"
-        android:layout_alignTop="@+id/iv_detail_pokemon"
-        android:layout_toRightOf="@+id/iv_detail_pokemon"
-        android:layout_toEndOf="@+id/iv_detail_pokemon" />
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@null"
-        android:id="@+id/tv_detail_types"
-        android:layout_below="@+id/tv_detail_name"
-        android:layout_toRightOf="@+id/iv_detail_pokemon"
-        android:layout_toEndOf="@+id/iv_detail_pokemon" />
+        <ImageView
+            android:id="@+id/iv_detail_pokemon"
+            android:layout_width="202dp"
+            android:layout_height="198dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tv_detail_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tv_detail_types"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart_comparison"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            />
+
+    </LinearLayout>
 
 
 
