@@ -46,7 +46,8 @@
             android:exported="false" />
         <activity
             android:name=".activities.ListActivity"
-            android:exported="false" >
+            android:exported="false"
+            >
 
         </activity>
     </application>
