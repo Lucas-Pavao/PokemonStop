@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -67,6 +70,8 @@ public class DetailActivity extends AppCompatActivity {
         int id = getIntent().getIntExtra("ID", 0);
         requestData(id);
 
+        getSupportActionBar().hide();
+
     }
 
     private void requestData(int id) {
@@ -116,10 +121,6 @@ public class DetailActivity extends AppCompatActivity {
 
         BarDataSet dataSet = new BarDataSet(entries, "Comparação de altura");
 
-
-
-
-
         BarData data = new BarData(dataSet);
         data.setBarWidth(0.4f);
 
@@ -127,9 +128,10 @@ public class DetailActivity extends AppCompatActivity {
         barChart.setFitBars(true);
         dataSet.setColors(Color.GREEN, Color.BLUE);
 
+
         XAxis xAxis = barChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(new String[]{"Pokémon", "Adulto"}));
+
 
         YAxis leftAxis = barChart.getAxisLeft();
         leftAxis.setAxisMinimum(0f);
@@ -145,11 +147,41 @@ public class DetailActivity extends AppCompatActivity {
         rightAxis.setTextColor(primaryTextColor);
         dataSet.setValueTextColor(primaryTextColor);
 
+
+
+
+        // Criar as legendas personalizadas
+        LegendEntry legendEntry1 = new LegendEntry();
+        legendEntry1.label = "Altura do Pokémon";
+        legendEntry1.formColor = Color.GREEN;
+
+        LegendEntry legendEntry2 = new LegendEntry();
+        legendEntry2.label = "Altura média do adulto";
+        legendEntry2.formColor = Color.BLUE;
+
+        // Adicionar as legendas personalizadas à LinearLayout
+        LinearLayout legendLayout = findViewById(R.id.legendLayout);
+        addLegendEntry(legendLayout, legendEntry1);
+        addLegendEntry(legendLayout, legendEntry2);
+
+
         animateBars();
 
         barChart.invalidate();
     }
 
+    private void addLegendEntry(LinearLayout legendLayout, LegendEntry entry) {
+        View legendView = getLayoutInflater().inflate(R.layout.legend_entry, legendLayout, false);
+        TextView labelTextView = legendView.findViewById(R.id.legendLabel);
+        ImageView iconImageView = legendView.findViewById(R.id.legendIcon);
+        View blockView = legendView.findViewById(R.id.legendBlock);
+
+        labelTextView.setText(entry.label);
+        iconImageView.setColorFilter(entry.formColor);
+        blockView.setBackgroundColor(entry.formColor);
+
+        legendLayout.addView(legendView);
+    }
     private void animateBars() {
         barChart.animateY(1500, Easing.EasingOption.EaseInOutQuad);
     }
