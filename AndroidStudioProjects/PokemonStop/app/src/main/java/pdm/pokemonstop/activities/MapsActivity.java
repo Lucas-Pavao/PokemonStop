@@ -159,9 +159,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             textView.setText(pokemon.getName()); // substitua pelo nome do Pokémon
 
             button.setOnClickListener(v -> {
-                // Coloque aqui o código para capturar o pokémon
-                // ...
-                popupWindow.dismiss(); // fecha a popup
+                if (marker.getTag() instanceof Pokemon) {
+                    Pokemon p = (Pokemon) marker.getTag();
+
+                    // Criar uma Intent para iniciar a DetailActivity
+                    Intent intent = new Intent(MapsActivity.this, DetailActivity.class);
+
+                    // Passar o ID do Pokémon para a DetailActivity
+                    intent.putExtra("ID", p.getId());
+
+
+                    // Iniciar a DetailActivity
+                    startActivity(intent);
+
+                    // Fechar a popup
+                    popupWindow.dismiss();
+                }
             });
 
             PopupWindow popupWindow = new PopupWindow(popupView, getResources().getDimensionPixelSize(R.dimen.popup_width), ViewGroup.LayoutParams.WRAP_CONTENT, true);

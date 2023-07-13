@@ -48,6 +48,13 @@ public class DetailActivity extends AppCompatActivity {
     private  int primaryTextColor;
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(DetailActivity.this, MapsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
